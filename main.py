@@ -1,6 +1,8 @@
 import cv2
+import os, sys, inspect #For dynamic filepaths
 
-# Pretrained classes in the model
+
+# Pretrained classes in the model - Dictionary
 classNames = {0: 'background',
               1: 'person', 2: 'bicycle', 3: 'car', 4: 'motorcycle', 5: 'airplane', 6: 'bus',
               7: 'train', 8: 'truck', 9: 'boat', 10: 'traffic light', 11: 'fire hydrant',
@@ -25,11 +27,15 @@ def id_class_name(class_id, classes):
         if class_id == key:
             return value
 
+#Find the execution path and join it with the direct reference
+def execution_path(filename):
+  return os.path.join(os.path.dirname(inspect.getfile(sys._getframe(1))), filename)			
 
-# Loading model
-model = cv2.dnn.readNetFromTensorflow('models/frozen_inference_graph.pb',
-                                      'models/ssd_mobilenet_v2_coco_2018_03_29.pbtxt')
-image = cv2.imread("image.jpeg")
+  # Loading model
+model = cv2.dnn.readNetFromTensorflow(execution_path('models/frozen_inference_graph.pb',
+                                      'models/ssd_mobilenet_v2_coco_2018_03_29.pbtxt'))
+image = cv2.imread(execution_path("image.jpeg"))
+
 
 image_height, image_width, _ = image.shape
 
@@ -37,7 +43,7 @@ model.setInput(cv2.dnn.blobFromImage(image, size=(300, 300), swapRB=True))
 output = model.forward()
 # print(output[0,0,:,:].shape)
 
-
+"""
 for detection in output[0, 0, :, :]:
     confidence = detection[2]
     if confidence > .5:
@@ -51,7 +57,7 @@ for detection in output[0, 0, :, :]:
         cv2.rectangle(image, (int(box_x), int(box_y)), (int(box_width), int(box_height)), (23, 230, 210), thickness=1)
         cv2.putText(image,class_name ,(int(box_x), int(box_y+.05*image_height)),cv2.FONT_HERSHEY_SIMPLEX,(.005*image_width),(0, 0, 255))
 
-
+"""
 
 
 

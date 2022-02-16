@@ -32,8 +32,8 @@ def execution_path(filename):
   return os.path.join(os.path.dirname(inspect.getfile(sys._getframe(1))), filename)			
 
   # Loading model
-model = cv2.dnn.readNetFromTensorflow(execution_path('models/frozen_inference_graph.pb',
-                                      'models/ssd_mobilenet_v2_coco_2018_03_29.pbtxt'))
+model = cv2.dnn.readNetFromTensorflow(execution_path('models/frozen_inference_graph.pb'),
+                                      execution_path('models/ssd_mobilenet_v2_coco_2018_03_29.pbtxt'))
 image = cv2.imread(execution_path("image.jpeg"))
 
 
@@ -45,7 +45,7 @@ model.setInput(cv2.dnn.blobFromImage(image, size=(300, 300), swapRB=True))
 
 # Returns a blob array
 output = model.forward()
-# print(output[0,0,:,:].shape)
+
 
 """
 for detection in output[0, 0, :, :]:
@@ -66,8 +66,6 @@ for detection in output[0, 0, :, :]:
 		cv2.putText(image,class_name ,(int(box_x), int(box_y+.05*image_height)),cv2.FONT_HERSHEY_SIMPLEX,(.005*image_width),(0, 0, 255))
 
 """
-
-
 
 cv2.imshow('image', image)
 # cv2.imwrite("image_box_text.jpg",image)
